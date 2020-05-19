@@ -25,6 +25,7 @@ struct ContentView: View {
             scoreTitle = "Wrong ! That’s the flag of \(countries[number])"
         }
         showingScore = true
+        calculateScore(number)
     }
     func calculateScore(_ number: Int) {
         if number == correctAnswer {
@@ -45,18 +46,12 @@ struct ContentView: View {
                     .fontWeight(.black)
                 VStack(spacing: 20) {
                     ForEach(0..<3){ number in
-                        Button(action: {
+                        FlagView(number: number, countries: self.countries) {
                             self.flagTapped(number)
-                            self.calculateScore(number)
-                        }) {
-                            Image(self.countries[number])
-                                .renderingMode(.original)
-                                .clipShape(Capsule())
-                                .overlay(Capsule().stroke(Color.black, lineWidth: 1))
-                                .shadow(color: .black, radius: 2)
-                        }.alert(isPresented: self.$showingScore) {
+                        }
+                        .alert(isPresented: self.$showingScore) {
                             Alert(title: Text(self.scoreTitle), message: Text("Your score is \(self.currentScore)"), dismissButton: .default(Text("Continue")) {
-                                self.askQuestion()
+                                    self.askQuestion()
                                 })
                         }
                     }
@@ -66,6 +61,23 @@ struct ContentView: View {
                     Spacer()
                 }
             }
+        }
+    }
+}
+
+struct FlagView: View {
+    var number: Int
+    var countries: [String]
+    
+    var onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            Image(self.countries[number])
+                .renderingMode(.original)
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(Color.black, lineWidth: 1))
+                .shadow(color: .black, radius: 2)
         }
     }
 }
